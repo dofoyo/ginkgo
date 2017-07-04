@@ -18,12 +18,12 @@ public class GreetingController {
     public ResponseContent<Greeting> greeting(@RequestParam(value="name", defaultValue="World") String name) {
     	Greeting g = new Greeting(counter.incrementAndGet(), String.format(template, name));
     	list.add(g);
-        return new ResponseContent<Greeting>("100","ok",g);
+        return new ResponseContent<Greeting>(ResponseEnum.SUCCESS,g);
     }
     
     @GetMapping("/greetings")
     public ResponseContent<List<Greeting>> greetings() {
-        return new ResponseContent<List<Greeting>>("100","ok",this.list);
+        return new ResponseContent<List<Greeting>>(ResponseEnum.SUCCESS,this.list);
     }
     
 }
