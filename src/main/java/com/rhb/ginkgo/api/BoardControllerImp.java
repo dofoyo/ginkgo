@@ -31,9 +31,9 @@ public class BoardControllerImp implements BoardController{
 	*/
 	
 	@GetMapping("/board")
-    public BoardDTO getBoard(@RequestParam(value="id", defaultValue="1") String boardid) {
+    public ResponseContent<BoardDTO> getBoard(@RequestParam(value="id", defaultValue="1") String boardid) {
     	//System.out.println("boardid: " + boardid);	
-        return boardService.getBoard(boardid);
+        return new ResponseContent<BoardDTO>("100","ok",boardService.getBoard(boardid));
     }
     
     @PutMapping("/stage")

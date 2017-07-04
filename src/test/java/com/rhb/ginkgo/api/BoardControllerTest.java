@@ -38,8 +38,8 @@ public class BoardControllerTest {
         int status = mvcResult.getResponse().getStatus();  
         String content = mvcResult.getResponse().getContentAsString();  
         
-        //System.out.println("status: " + status);
-        //System.out.println("content: " + content);
+        System.out.println("status: " + status);
+        System.out.println("content: " + content);
 
         Assert.assertTrue("错误，正确的返回值为200", status == 200);  
         Assert.assertFalse("错误，正确的返回值为200", status != 200);  

@@ -15,18 +15,15 @@ public class GreetingController {
     private final List<Greeting> list = new ArrayList<Greeting>();
 
     @GetMapping("/greeting")
-    public Greeting greeting(@RequestParam(value="name", defaultValue="World") String name) {
+    public ResponseContent<Greeting> greeting(@RequestParam(value="name", defaultValue="World") String name) {
     	Greeting g = new Greeting(counter.incrementAndGet(), String.format(template, name));
     	list.add(g);
-        return g;
+        return new ResponseContent<Greeting>("100","ok",g);
     }
     
     @GetMapping("/greetings")
-    public List<Greeting> greetings() {
-        return this.list;
+    public ResponseContent<List<Greeting>> greetings() {
+        return new ResponseContent<List<Greeting>>("100","ok",this.list);
     }
-    
-    
-    
     
 }
