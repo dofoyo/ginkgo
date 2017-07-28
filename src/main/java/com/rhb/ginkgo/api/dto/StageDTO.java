@@ -7,7 +7,7 @@ public class StageDTO {
 	private String stageid;
 	private String stagename;
 	private Integer orderNo;
-	private List<TaskDTO> tasks;
+	private List<ProjectDTO> projects;
 	
 	public StageDTO(){
 		
@@ -18,7 +18,7 @@ public class StageDTO {
 		this.stageid = stageid;
 		this.stagename = stagename;
 		this.orderNo = orderNo;
-		tasks = new ArrayList<TaskDTO>();
+		projects = new ArrayList<ProjectDTO>();
 	}
 
 	public String getStageid() {
@@ -37,12 +37,12 @@ public class StageDTO {
 		this.stagename = stagename;
 	}
 
-	public List<TaskDTO> getTasks() {
-		return tasks;
+	public List<ProjectDTO> getProjects() {
+		return projects;
 	}
 
-	public void setTasks(List<TaskDTO> tasks) {
-		this.tasks = tasks;
+	public void setTasks(List<ProjectDTO> projects) {
+		this.projects = projects;
 	}
 
 	public Integer getOrderNo() {
@@ -55,7 +55,7 @@ public class StageDTO {
 
 	@Override
 	public String toString() {
-		return "StageDTO [stageid=" + stageid + ", stagename=" + stagename + ", orderNo=" + orderNo + ", tasks=" + tasks
+		return "StageDTO [stageid=" + stageid + ", stagename=" + stagename + ", orderNo=" + orderNo + ", tasks=" + projects
 				+ "]";
 	}
 	

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -12,13 +13,13 @@ import org.springframework.stereotype.Service;
 
 import com.rhb.ginkgo.api.dto.BoardDTO;
 import com.rhb.ginkgo.api.dto.StageDTO;
-import com.rhb.ginkgo.api.dto.TaskDTO;
+import com.rhb.ginkgo.api.dto.ProjectDTO;
 import com.rhb.ginkgo.domain.Board;
 import com.rhb.ginkgo.repository.BoardRepository;
 import com.rhb.ginkgo.repository.BoardRepositoryImpl;
 import com.rhb.ginkgo.repository.entity.BoardEntity;
 import com.rhb.ginkgo.repository.entity.StageEntity;
-import com.rhb.ginkgo.repository.entity.TaskEntity;
+import com.rhb.ginkgo.repository.entity.ProjectEntity;
 
 @Service("BoardServiceImple")
 public class BoardServiceImple implements BoardService {
@@ -50,14 +51,14 @@ public class BoardServiceImple implements BoardService {
 		
 		List<StageEntity> stages = boardRepository.getStages(boardid);
 		
-		List<TaskEntity> tasks;
+		List<ProjectEntity> projects;
 		
 		for(StageEntity se : stages){
 			StageDTO stage = new StageDTO(se.getStageid(),se.getStagename(),se.getOrderNo());
-			tasks = boardRepository.getTasks(se.getStageid());
-			for(TaskEntity te : tasks){
-				TaskDTO task = new TaskDTO(te.getTaskid(),te.getTaskname(),te.getDescription(),te.getOrderNo());
-				stage.getTasks().add(task);
+			projects = boardRepository.getProjects(se.getStageid());
+			for(ProjectEntity te : projects){
+				ProjectDTO project = new ProjectDTO(te.getProjectid(),te.getProjectname(),te.getDescription(),te.getOrderNo());
+				stage.getProjects().add(project);
 			}
 			board.getStages().add(stage);
 		}
@@ -66,13 +67,20 @@ public class BoardServiceImple implements BoardService {
 	}
 
 	@Override
-	public void updateStage(String stageid, List<TaskDTO> tasks) {
-		List<TaskEntity> tasklist = new ArrayList<TaskEntity>();
-		for(TaskDTO td : tasks){
-			TaskEntity task = new TaskEntity(stageid,td.getTaskid(),td.getTaskname(),td.getDescription(),td.getOrderNo());
-			tasklist.add(task);
+	public void updateStage(String stageid, List<ProjectDTO> projects) {
+		List<ProjectEntity> projectlist = new ArrayList<ProjectEntity>();
+		for(ProjectDTO td : projects){
+			ProjectEntity project = new ProjectEntity(stageid,td.getProjectid(),td.getProjectname(),td.getDescription(),td.getOrderNo());
+			projectlist.add(project);
 		}
-		boardRepository.updateTasks(stageid, tasklist);
+		boardRepository.updateProjects(stageid, projectlist);
+	}
+
+	@Override
+	public void createProject(ProjectDTO projectDTO) {
+		//String stageid,String projectid, String projectname, String description,Integer orderNo
+		ProjectEntity projectEntity = new ProjectEntity("0",UUID.randomUUID().toString(),projectDTO.getProjectname(),projectDTO.getDescription(),0);
+		boardRepository.saveProject(projectEntity);
 	}
 
 }
