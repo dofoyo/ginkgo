@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.rhb.ginkgo.Application;
+import com.rhb.ginkgo.repository.entity.ProjectEntity;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
@@ -14,16 +15,24 @@ public class BoardRepositoryTest {
 	@Autowired
 	BoardRepository boardRepository;
 	
-	@Test
+	//@Test
 	public void testGetBoards(){
 		System.out.println(boardRepository.getBoards());
 	}
 	
-	@Test
+	//@Test
 	public void testGetBoard(){
 		String boardid = "1";
 		
 		System.out.println(boardRepository.getBoard(boardid));
+		
+	}
+	
+	@Test
+	public void saveProject(){
+		ProjectEntity p = new ProjectEntity();
+		p.setProjectname("ddd");
+		boardRepository.saveProject(p);
 		
 	}
 }

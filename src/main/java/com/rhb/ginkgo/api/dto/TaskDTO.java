@@ -1,61 +1,77 @@
 package com.rhb.ginkgo.api.dto;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import com.rhb.ginkgo.repository.entity.StageEntity;
+
 public class TaskDTO {
 	private String taskid;
-	private String taskname;
-	private String description;
-	private Integer orderNo;
+	private String subject;
+	private List<TaskDetailDTO> taskDetail = new ArrayList<TaskDetailDTO>();
+	private List<String> actors = new ArrayList<String>();
+	private List<String> others = new ArrayList<String>();
 	
-	public TaskDTO(){
-		
-	}
 	
-	public TaskDTO(String taskid, String taskname, String description,Integer orderNo){
-		super();
-		this.taskid = taskid;
-		this.taskname = taskname;
-		this.description = description;
-		this.orderNo = orderNo;
+	
+	public TaskDTO() {
 	}
-
 	public String getTaskid() {
 		return taskid;
 	}
-
 	public void setTaskid(String taskid) {
 		this.taskid = taskid;
 	}
-
-	public String getTaskname() {
-		return taskname;
+	public String getSubject() {
+		return subject;
+	}
+	public void setSubject(String subject) {
+		this.subject = subject;
+	}
+	public List<TaskDetailDTO> getTaskDetail() {
+		Collections.sort(taskDetail, new Comparator<TaskDetailDTO>(){
+			public int compare(TaskDetailDTO t1, TaskDetailDTO t2) {
+				return t1.getDateTime().compareTo(t2.getDateTime());
+			}
+			
+		});
+		
+		return taskDetail;
+	}
+	public void addTaskDetail(TaskDetailDTO taskDetail) {
+		this.taskDetail.add(taskDetail);
+	}
+	
+	public void addActor(String personname){
+		this.actors.add(personname);
 	}
 
-	public void setTaskname(String taskname) {
-		this.taskname = taskname;
+	public void addOther(String personname){
+		this.others.add(personname);
 	}
 
-	public String getDescription() {
-		return description;
+	
+	
+	
+	public List<String> getActors() {
+		return actors;
 	}
-
-	public void setDescription(String description) {
-		this.description = description;
+	public void setActors(List<String> actors) {
+		this.actors = actors;
 	}
-
-	public Integer getOrderNo() {
-		return orderNo;
+	public List<String> getOthers() {
+		return others;
 	}
-
-	public void setOrderNo(Integer orderNo) {
-		this.orderNo = orderNo;
+	public void setOthers(List<String> others) {
+		this.others = others;
 	}
-
-	@Override
-	public String toString() {
-		return "TaskDTO [taskid=" + taskid + ", taskname=" + taskname + ", description=" + description + ", orderNo="
-				+ orderNo + "]";
+	public void setTaskDetail(List<TaskDetailDTO> taskDetail) {
+		this.taskDetail = taskDetail;
 	}
-
-
+	
+	
+	
 	
 }

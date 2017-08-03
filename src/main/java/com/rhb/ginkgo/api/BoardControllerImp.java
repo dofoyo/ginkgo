@@ -24,13 +24,6 @@ import com.rhb.ginkgo.service.BoardService;
 public class BoardControllerImp implements BoardController{
 	@Autowired
 	private BoardService boardService;
-
-	/*
-	@Autowired 
-	public BoardController(BoardService boardService){
-		this.boardService = boardService;
-	}
-	*/
 	
 	@GetMapping("/board")
     public ResponseContent<BoardDTO> getBoard(@RequestParam(value="id", defaultValue="1") String boardid) {
@@ -52,12 +45,12 @@ public class BoardControllerImp implements BoardController{
 		}
     	
     	if(projects != null){
-    		boardService.updateStage(stageid, projects);
+    		boardService.updateProjectStageidAndOrder(stageid, projects);
     	}
     }
     
     @PutMapping("/project")
-    public void saveProject(@RequestParam(value="id") String projectid, @RequestBody String body){
+    public void createProject(@RequestParam(value="id") String projectid, @RequestBody String body){
     	//System.out.println("save project " + projectid + ", " + body);
     	
     	ObjectMapper mapper = new ObjectMapper();
@@ -69,6 +62,23 @@ public class BoardControllerImp implements BoardController{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
     }
+
+    @PutMapping("/task")
+    public ResponseContent<String> addTask(@RequestParam(value="id") String projectid_taskid, @RequestBody String body){
+    	//System.out.println("add Task, projectid_taskid=" + projectid_taskid);
+    	String[] ids = projectid_taskid.split(",");
+    	String projectid = ids[0];
+    	String taskid = ids[1];
+		boardService.updateProjectidAndTaskid(projectid,taskid);
+		return new ResponseContent<String>(ResponseEnum.SUCCESS,new String());
+    }
+
+    
+    
+	@GetMapping("/projects")
+    public ResponseContent<ProjectDTO> getProject(@RequestParam(value="id") String projectid) {
+    	//System.out.println("projectid: " + projectid);	
+        return new ResponseContent<ProjectDTO>(ResponseEnum.SUCCESS,boardService.getProject(projectid));
+    }   
 }

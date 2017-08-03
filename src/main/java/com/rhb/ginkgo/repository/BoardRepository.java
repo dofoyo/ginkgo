@@ -11,7 +11,12 @@ public interface BoardRepository {
 	public BoardEntity getBoard(String id);
 	public List<StageEntity> getStages(String boardId);
 	public List<ProjectEntity> getProjects(String stageId);
-	public void updateProjects(String stageId, List<ProjectEntity> projects);
+	
+	public ProjectEntity getProject(String projectid);
+	
+	public void updateProjectStageidAndOrder(String stageId, List<ProjectEntity> projects);
+	public void updateProjectidAndTaskid(String projectid, String taskid);
 	
 	public void saveProject(ProjectEntity projectEntity);
+	
 }

@@ -1,24 +1,34 @@
 package com.rhb.ginkgo.repository;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rhb.ginkgo.api.dto.ProjectDTO;
 import com.rhb.ginkgo.repository.entity.BoardEntity;
 import com.rhb.ginkgo.repository.entity.StageEntity;
 import com.rhb.ginkgo.repository.entity.ProjectEntity;
 
 @Repository("BoardRepositoryImpl")
 public class BoardRepositoryImpl implements BoardRepository{
-	private Map<String,BoardEntity> boards = new HashMap<String,BoardEntity>();
-	private Map<String,StageEntity> stages = new HashMap<String,StageEntity>();
-	private Map<String,ProjectEntity> projects = new HashMap<String,ProjectEntity>();
+	private String boardsjsonFile = "d:\\workspace\\boards.json";
+	private String stagesjsonFile = "d:\\workspace\\stages.json";
+	private String projectsjsonFile = "d:\\workspace\\projects.json";
+	private List<BoardEntity> boards = new ArrayList<BoardEntity>();
+	private List<StageEntity> stages = new ArrayList<StageEntity>();
+	private List<ProjectEntity> projects = new ArrayList<ProjectEntity>();
 
 	public BoardRepositoryImpl(){
 		//System.out.println("*********** init BoardRepository ********");
@@ -27,18 +37,29 @@ public class BoardRepositoryImpl implements BoardRepository{
 
 	@Override
 	public List<BoardEntity> getBoards() {
-		return new ArrayList<BoardEntity>(boards.values());
+		return this.boards;
 	}
 
 	@Override
-	public BoardEntity getBoard(String id) {
-		return boards.get(id);
+	public BoardEntity getBoard(String boardid) {
+		return this.getBoardEntityById(boardid);
+	}
+	
+	private BoardEntity getBoardEntityById(String boardid){
+		BoardEntity boardEntity = null;
+		for(BoardEntity b : boards){
+			if(b.getBoardid().equals(boardid)){
+				boardEntity  = b;
+				break;
+			}
+		}
+		return boardEntity;
 	}
 
 	@Override
 	public List<StageEntity> getStages(String boardId) {
 		List<StageEntity> l = new ArrayList<StageEntity>();
-		for(StageEntity se : stages.values()){
+		for(StageEntity se : stages){
 			if(se.getBoardid().equals(boardId)){
 				l.add(se);
 			}
@@ -57,7 +78,7 @@ public class BoardRepositoryImpl implements BoardRepository{
 	@Override
 	public List<ProjectEntity> getProjects(String stageId) {
 		List<ProjectEntity> l = new ArrayList<ProjectEntity>();
-		for(ProjectEntity te : this.projects.values()){
+		for(ProjectEntity te : this.projects){
 			if(te.getStageid().equals(stageId)){
 				l.add(te);
 			}
@@ -74,56 +95,87 @@ public class BoardRepositoryImpl implements BoardRepository{
 	}
 
 	@Override
-	public void updateProjects(String stageId, List<ProjectEntity> projectlist) {
+	public void updateProjectStageidAndOrder(String stageId, List<ProjectEntity> projectlist) {
 		for(ProjectEntity te : projectlist){
-			ProjectEntity t = this.projects.get(te.getProjectid());
+			ProjectEntity t = this.getProjectEntityById(te.getProjectid());
 			t.setOrderNo(te.getOrderNo());
 			t.setStageid(stageId);
 			//this.projects.get(te.getProjectid()).setOrderNo(te.getOrderNo());
 			
 		}
+		this.writeToFile(projectsjsonFile, this.projects);
 		//System.out.println("...............updated projects. ");
+	}
+	
+	private ProjectEntity getProjectEntityById(String projectid){
+		ProjectEntity pe = null;
+		for(ProjectEntity p : this.projects){
+			if(p.getProjectid().equals(projectid)){
+				pe = p;
+				break;
+			}
+		}
+		return pe;
 	}
 	
 	private void init(){
 		System.out.println("do init............");
 		
-		this.boards.put("1",new BoardEntity("1","IT系统建设看板"));
-		
-		
-		this.stages.put("0",new StageEntity("1","0","1.需求",0));
-		this.stages.put("1",new StageEntity("1","1","2.方案",1));
-		this.stages.put("2",new StageEntity("1","2","3.设计",2));
-		this.stages.put("3",new StageEntity("1","3","4.开发与测试",3));
-		this.stages.put("4",new StageEntity("1","4","5.应用",4));
-		this.stages.put("5",new StageEntity("1","5","6.验收",5));
-		
-		/*
-		this.projects.put("0",new ProjectEntity("0","0","dog","my best friend in the world",0));
-		this.projects.put("1",new ProjectEntity("1","1","cat","it is black",1));
-		this.projects.put("2",new ProjectEntity("1","2","hen","give me eggs every day",2));
-		this.projects.put("3",new ProjectEntity("0","3","mouse","i hate it",3));
-		this.projects.put("4",new ProjectEntity("1","4","bird","she can fly飞翔",4));
-		this.projects.put("5",new ProjectEntity("2","5","eargle","please catch the mouse",5));
-		this.projects.put("6",new ProjectEntity("0","6","tigger","it is so terrible",6));
-		this.projects.put("7",new ProjectEntity("6","7","listen to radio","it is the sound of america",7));
-		this.projects.put("8",new ProjectEntity("6","8","cooking","it is for my best friend",8));
-		this.projects.put("9",new ProjectEntity("7","9","writing","i am going to be writer.",9));
-		this.projects.put("10",new ProjectEntity("7","10","reading","there are so many books i loved",10));
-		this.projects.put("11",new ProjectEntity("8","11","runing","i want to fly飞翔",11));
-		*/
-		
-		this.boards.put("2",new BoardEntity("2","TO DO LIST"));
-		this.stages.put("6",new StageEntity("2","6","todo",0));
-		this.stages.put("7",new StageEntity("2","7","doing",1));
-		this.stages.put("8",new StageEntity("2","8","done",2));
+		ObjectMapper mapper = new ObjectMapper();
+    	try {
+        	JavaType boardsjavaType =  mapper.getTypeFactory().constructParametricType(List.class,BoardEntity.class); 
+        	boards =  (List<BoardEntity>)mapper.readValue(new File(boardsjsonFile), boardsjavaType);
+        	
+
+        	JavaType stagejavaType =  mapper.getTypeFactory().constructParametricType(List.class, StageEntity.class); 
+        	stages =  (List<StageEntity>)mapper.readValue(new File(stagesjsonFile), stagejavaType);
+
+        	
+        	JavaType projectsjavaType =  mapper.getTypeFactory().constructParametricType(List.class, ProjectEntity.class); 
+        	projects =  (List<ProjectEntity>)mapper.readValue(new File(projectsjsonFile), projectsjavaType);
+
+    	} catch (JsonGenerationException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void saveProject(ProjectEntity projectEntity) {
-		this.projects.put(projectEntity.getProjectid(), projectEntity);
-		
-		
+		this.projects.add(projectEntity);
+		this.writeToFile(projectsjsonFile, this.projects);
 	}
 	
+	private void writeToFile(String jsonfile, Object object){
+		ObjectMapper mapper = new ObjectMapper();
+    	try {
+			mapper.writeValue(new File(jsonfile),object);
+		} catch (JsonGenerationException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void updateProjectidAndTaskid(String projectid, String taskid) {
+		ProjectEntity pe = getProjectEntityById(projectid);
+		String taskids = pe.getTaskids();
+		if(!taskids.contains(taskid)){
+			pe.setTaskids(taskids + "," + taskid);
+		}
+		
+		this.writeToFile(projectsjsonFile, this.projects);
+	}
+
+	@Override
+	public ProjectEntity getProject(String projectid) {
+		return this.getProjectEntityById(projectid);
+	}
+
 }

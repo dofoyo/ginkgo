@@ -10,7 +10,10 @@ public interface BoardService {
 	public Map<String,String> getBoards();
 	public BoardDTO getBoard(String id);
 	
-	public void updateStage(String stageid, List<ProjectDTO> projects);
+	public void updateProjectStageidAndOrder(String stageid, List<ProjectDTO> projects);
+	public void updateProjectidAndTaskid(String projectid,String taskid);
 	public void createProject(ProjectDTO projectDTO);
+	
+	public ProjectDTO getProject(String projectid);
 	
 }

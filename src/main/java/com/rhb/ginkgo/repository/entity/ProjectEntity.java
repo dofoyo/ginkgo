@@ -1,11 +1,15 @@
 package com.rhb.ginkgo.repository.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class ProjectEntity {
 	private String stageid;
 	private String projectid;
 	private String projectname;
 	private String description;
 	private Integer orderNo;
+	private String taskids;
 
 	public ProjectEntity(){
 		
@@ -18,6 +22,7 @@ public class ProjectEntity {
 		this.projectname = projectname;
 		this.description = description;
 		this.orderNo = orderNo;
+		this.taskids = "";
 	}
 
 	public String getProjectid() {
@@ -59,12 +64,23 @@ public class ProjectEntity {
 	public void setOrderNo(Integer orderNo) {
 		this.orderNo = orderNo;
 	}
+	
+	
+	
+	public String getTaskids() {
+		return taskids;
+	}
+
+	public void setTaskids(String taskids) {
+		this.taskids = taskids;
+	}
 
 	@Override
 	public String toString() {
-		return "ProjectEntity [stageid=" + stageid + ", projectid=" + projectid + ", projectname=" + projectname + ", description="
-				+ description + ", orderNo=" + orderNo + "]";
+		return "ProjectEntity [stageid=" + stageid + ", projectid=" + projectid + ", projectname=" + projectname
+				+ ", description=" + description + ", orderNo=" + orderNo + ", taskids=" + taskids + "]";
 	}
+
 	
 	
 }

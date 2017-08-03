@@ -1,10 +1,16 @@
 package com.rhb.ginkgo.api.dto;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class ProjectDTO {
 	private String projectid;
 	private String projectname;
 	private String description;
 	private Integer orderNo;
+	private List<TaskDTO> tasks = new ArrayList<TaskDTO>();
 	
 	public ProjectDTO(){
 		
@@ -50,12 +56,18 @@ public class ProjectDTO {
 		this.orderNo = orderNo;
 	}
 
-	@Override
-	public String toString() {
-		return "ProjectDTO [projectid=" + projectid + ", projectname=" + projectname + ", description=" + description + ", orderNo="
-				+ orderNo + "]";
+	public List<TaskDTO> getTasks() {
+		return tasks;
 	}
 
+	public void addTask(TaskDTO taskDTO) {
+		tasks.add(taskDTO);
+	}
 
+	@Override
+	public String toString() {
+		return "ProjectDTO [projectid=" + projectid + ", projectname=" + projectname + ", description=" + description
+				+ ", orderNo=" + orderNo + ", tasks=" + tasks + "]";
+	}
 	
 }
