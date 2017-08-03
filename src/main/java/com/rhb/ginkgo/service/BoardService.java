@@ -12,6 +12,7 @@ public interface BoardService {
 	
 	public void updateProjectStageidAndOrder(String stageid, List<ProjectDTO> projects);
 	public void updateProjectidAndTaskid(String projectid,String taskid);
+	public void removeTaskidFromProject(String projectid,String taskid);
 	public void createProject(ProjectDTO projectDTO);
 	
 	public ProjectDTO getProject(String projectid);

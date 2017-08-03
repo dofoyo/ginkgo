@@ -4,12 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.rhb.ginkgo.api.dto.BoardDTO;
@@ -17,10 +14,8 @@ import com.rhb.ginkgo.api.dto.StageDTO;
 import com.rhb.ginkgo.api.dto.TaskDTO;
 import com.rhb.ginkgo.api.dto.TaskDetailDTO;
 import com.rhb.ginkgo.api.dto.ProjectDTO;
-import com.rhb.ginkgo.domain.Board;
 import com.rhb.ginkgo.repository.AttachmentRepository;
 import com.rhb.ginkgo.repository.BoardRepository;
-import com.rhb.ginkgo.repository.BoardRepositoryImpl;
 import com.rhb.ginkgo.repository.PersonRepository;
 import com.rhb.ginkgo.repository.TaskRepository;
 import com.rhb.ginkgo.repository.entity.AttachmentEntity;
@@ -207,6 +202,12 @@ public class BoardServiceImple implements BoardService {
 			}
 		}
 		return html;
+		
+	}
+
+	@Override
+	public void removeTaskidFromProject(String projectid, String taskid) {
+		this.boardRepository.removeTaskidFromProject(projectid, taskid);
 		
 	}
 

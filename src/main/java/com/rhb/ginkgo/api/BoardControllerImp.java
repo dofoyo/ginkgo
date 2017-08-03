@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -74,6 +75,15 @@ public class BoardControllerImp implements BoardController{
 		return new ResponseContent<String>(ResponseEnum.SUCCESS,new String());
     }
 
+    @DeleteMapping("/task")
+    public ResponseContent<String> removeTask(@RequestParam(value="id") String projectid_taskid, @RequestBody String body){
+    	System.out.println("remove Task, projectid_taskid=" + projectid_taskid);
+    	String[] ids = projectid_taskid.split(",");
+    	String projectid = ids[0];
+    	String taskid = ids[1];
+		boardService.removeTaskidFromProject(projectid,taskid);
+		return new ResponseContent<String>(ResponseEnum.SUCCESS,new String());
+    }
     
     
 	@GetMapping("/projects")

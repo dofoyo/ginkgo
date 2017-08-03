@@ -166,16 +166,37 @@ public class BoardRepositoryImpl implements BoardRepository{
 	public void updateProjectidAndTaskid(String projectid, String taskid) {
 		ProjectEntity pe = getProjectEntityById(projectid);
 		String taskids = pe.getTaskids();
-		if(!taskids.contains(taskid)){
-			pe.setTaskids(taskids + "," + taskid);
+		if(!taskid.trim().isEmpty() && !taskids.contains(taskid)){
+			pe.setTaskids((taskids.trim().isEmpty()? "" : taskids+",") + taskid);
 		}
 		
+		///System.out.println("before: " + taskids);
+		//System.out.println("after: " + pe.getTaskids());
+
 		this.writeToFile(projectsjsonFile, this.projects);
 	}
 
 	@Override
 	public ProjectEntity getProject(String projectid) {
 		return this.getProjectEntityById(projectid);
+	}
+
+	@Override
+	public void removeTaskidFromProject(String projectid, String taskid) {
+		ProjectEntity pe = getProjectEntityById(projectid);
+		String taskids = pe.getTaskids();
+		String t = taskids.replace(taskid, "");
+		t = t.replace(",,", ",");
+		if(t.endsWith(",")){
+			t = t.substring(0, t.length()-1);
+		}
+		
+		pe.setTaskids(t);
+		
+		//System.out.println("before: " + taskids);
+		//System.out.println("after: " + pe.getTaskids());
+	
+		this.writeToFile(projectsjsonFile, this.projects);		
 	}
 
 }
