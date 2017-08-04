@@ -211,5 +211,11 @@ public class BoardServiceImple implements BoardService {
 		
 	}
 
+	@Override
+	public void deleteProject(String projectid) {
+		this.boardRepository.deleteProject(projectid);
+		
+	}
+
 
 }

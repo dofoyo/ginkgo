@@ -14,6 +14,7 @@ public interface BoardService {
 	public void updateProjectidAndTaskid(String projectid,String taskid);
 	public void removeTaskidFromProject(String projectid,String taskid);
 	public void createProject(ProjectDTO projectDTO);
+	public void deleteProject(String projectid);
 	
 	public ProjectDTO getProject(String projectid);
 	

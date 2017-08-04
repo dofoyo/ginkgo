@@ -85,6 +85,12 @@ public class BoardControllerImp implements BoardController{
 		return new ResponseContent<String>(ResponseEnum.SUCCESS,new String());
     }
     
+    @DeleteMapping("/project")
+    public ResponseContent<String> deleteProject(@RequestParam(value="id") String projectid, @RequestBody String body){
+    	System.out.println("remove project, projectid=" + projectid);
+		boardService.deleteProject(projectid);
+		return new ResponseContent<String>(ResponseEnum.SUCCESS,new String());
+    }
     
 	@GetMapping("/projects")
     public ResponseContent<ProjectDTO> getProject(@RequestParam(value="id") String projectid) {

@@ -17,7 +17,7 @@ public interface BoardRepository {
 	public void updateProjectStageidAndOrder(String stageId, List<ProjectEntity> projects);
 	public void updateProjectidAndTaskid(String projectid, String taskid);
 	public void removeTaskidFromProject(String projectid, String taskid);
-	
+	public void deleteProject(String projectid);
 	public void saveProject(ProjectEntity projectEntity);
 	
 }

@@ -199,4 +199,11 @@ public class BoardRepositoryImpl implements BoardRepository{
 		this.writeToFile(projectsjsonFile, this.projects);		
 	}
 
+	@Override
+	public void deleteProject(String projectid) {
+		ProjectEntity pe = getProjectEntityById(projectid);
+		this.projects.remove(pe);
+		this.writeToFile(projectsjsonFile, this.projects);		
+	}
+
 }
