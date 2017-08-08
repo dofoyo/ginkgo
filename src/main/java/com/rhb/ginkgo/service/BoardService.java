@@ -8,14 +8,14 @@ import com.rhb.ginkgo.api.dto.ProjectDTO;
 
 public interface BoardService {
 	public Map<String,String> getBoards();
-	public BoardDTO getBoard(String id);
+	
+	public BoardDTO getBoard(String id, boolean refresh);
 	
 	public void updateProjectStageidAndOrder(String stageid, List<ProjectDTO> projects);
-	public void updateProjectidAndTaskid(String projectid,String taskid);
-	public void removeTaskidFromProject(String projectid,String taskid);
-	public void createProject(ProjectDTO projectDTO);
-	public void deleteProject(String projectid);
 	
-	public ProjectDTO getProject(String projectid);
+	public ProjectDTO getProject(String projectid, boolean refresh);
+	
+	public void refreshProjects();
+	public void refreshProjectsTaskids(String projectid);
 	
 }

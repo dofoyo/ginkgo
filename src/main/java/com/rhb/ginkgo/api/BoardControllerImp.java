@@ -1,15 +1,11 @@
 package com.rhb.ginkgo.api;
 
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,7 +25,14 @@ public class BoardControllerImp implements BoardController{
 	@GetMapping("/board")
     public ResponseContent<BoardDTO> getBoard(@RequestParam(value="id", defaultValue="1") String boardid) {
     	//System.out.println("boardid: " + boardid);	
-        return new ResponseContent<BoardDTO>(ResponseEnum.SUCCESS,boardService.getBoard(boardid));
+		System.out.println("boardService: " + boardService);
+        return new ResponseContent<BoardDTO>(ResponseEnum.SUCCESS,boardService.getBoard(boardid,false));
+    }
+	
+	@GetMapping("/refreshBoardAndProject")
+    public ResponseContent<BoardDTO> getBoardAfterRefreshed(@RequestParam(value="id", defaultValue="1") String boardid) {
+    	//System.out.println("boardid: " + boardid);	
+        return new ResponseContent<BoardDTO>(ResponseEnum.SUCCESS,boardService.getBoard(boardid,true));
     }
     
     @PutMapping("/stage")
@@ -50,51 +53,16 @@ public class BoardControllerImp implements BoardController{
     	}
     }
     
-    @PutMapping("/project")
-    public void createProject(@RequestParam(value="id") String projectid, @RequestBody String body){
-    	//System.out.println("save project " + projectid + ", " + body);
-    	
-    	ObjectMapper mapper = new ObjectMapper();
-    	try {
-			ProjectDTO projectDTO = mapper.readValue(body, ProjectDTO.class);
-			boardService.createProject(projectDTO);
-			//System.out.println(projectDTO);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    }
-
-    @PutMapping("/task")
-    public ResponseContent<String> addTask(@RequestParam(value="id") String projectid_taskid, @RequestBody String body){
-    	//System.out.println("add Task, projectid_taskid=" + projectid_taskid);
-    	String[] ids = projectid_taskid.split(",");
-    	String projectid = ids[0];
-    	String taskid = ids[1];
-		boardService.updateProjectidAndTaskid(projectid,taskid);
-		return new ResponseContent<String>(ResponseEnum.SUCCESS,new String());
-    }
-
-    @DeleteMapping("/task")
-    public ResponseContent<String> removeTask(@RequestParam(value="id") String projectid_taskid, @RequestBody String body){
-    	System.out.println("remove Task, projectid_taskid=" + projectid_taskid);
-    	String[] ids = projectid_taskid.split(",");
-    	String projectid = ids[0];
-    	String taskid = ids[1];
-		boardService.removeTaskidFromProject(projectid,taskid);
-		return new ResponseContent<String>(ResponseEnum.SUCCESS,new String());
-    }
-    
-    @DeleteMapping("/project")
-    public ResponseContent<String> deleteProject(@RequestParam(value="id") String projectid, @RequestBody String body){
-    	System.out.println("remove project, projectid=" + projectid);
-		boardService.deleteProject(projectid);
-		return new ResponseContent<String>(ResponseEnum.SUCCESS,new String());
-    }
-    
-	@GetMapping("/projects")
+	@GetMapping("/project")
     public ResponseContent<ProjectDTO> getProject(@RequestParam(value="id") String projectid) {
     	//System.out.println("projectid: " + projectid);	
-        return new ResponseContent<ProjectDTO>(ResponseEnum.SUCCESS,boardService.getProject(projectid));
-    }   
+        return new ResponseContent<ProjectDTO>(ResponseEnum.SUCCESS,boardService.getProject(projectid,false));
+    }
+	
+	@GetMapping("/refreshProjectAndTask")
+    public ResponseContent<ProjectDTO> getProjectAfterRefreshed(@RequestParam(value="id") String projectid) {
+    	//System.out.println("projectid: " + projectid);	
+        return new ResponseContent<ProjectDTO>(ResponseEnum.SUCCESS,boardService.getProject(projectid,true));
+    } 
+	
 }

@@ -9,7 +9,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -23,20 +26,22 @@ import com.rhb.ginkgo.repository.entity.ProjectEntity;
 
 @Repository("BoardRepositoryImpl")
 public class BoardRepositoryImpl implements BoardRepository{
-	private String boardsjsonFile = "d:\\workspace\\boards.json";
-	private String stagesjsonFile = "d:\\workspace\\stages.json";
-	private String projectsjsonFile = "d:\\workspace\\projects.json";
-	private List<BoardEntity> boards = new ArrayList<BoardEntity>();
-	private List<StageEntity> stages = new ArrayList<StageEntity>();
-	private List<ProjectEntity> projects = new ArrayList<ProjectEntity>();
-
-	public BoardRepositoryImpl(){
-		//System.out.println("*********** init BoardRepository ********");
-		this.init();
-	}
+	
+	@Value("${thePath}")
+	private String thePath;
+	
+	private String boardsjsonFile;
+	private String stagesjsonFile;
+	private String projectsjsonFile;
+	private List<BoardEntity> boards = null;
+	private List<StageEntity> stages = null;
+	private List<ProjectEntity> projects = null;
 
 	@Override
 	public List<BoardEntity> getBoards() {
+		if(this.boards == null){
+			this.init();
+		}
 		return this.boards;
 	}
 
@@ -46,6 +51,10 @@ public class BoardRepositoryImpl implements BoardRepository{
 	}
 	
 	private BoardEntity getBoardEntityById(String boardid){
+		if(this.boards == null){
+			this.init();
+		}
+		
 		BoardEntity boardEntity = null;
 		for(BoardEntity b : boards){
 			if(b.getBoardid().equals(boardid)){
@@ -118,8 +127,33 @@ public class BoardRepositoryImpl implements BoardRepository{
 		return pe;
 	}
 	
+	private ProjectEntity getProjectEntityByName(String projectname){
+		ProjectEntity pe = null;
+		for(ProjectEntity p : this.projects){
+			if(p.getProjectname().equals(projectname)){
+				pe = p;
+				break;
+			}
+		}
+		return pe;
+	}
+	
+	
 	private void init(){
 		System.out.println("do init............");
+		
+		boardsjsonFile = this.thePath + "boards.json";
+		stagesjsonFile = this.thePath + "stages.json";
+		projectsjsonFile = this.thePath + "projects.json";
+		
+		boards = new ArrayList<BoardEntity>();
+		stages = new ArrayList<StageEntity>();
+		projects = new ArrayList<ProjectEntity>();
+
+		
+		//System.out.println("boardsjsonFile: " + this.boardsjsonFile);
+		//System.out.println("stagesjsonFile: " + this.boardsjsonFile);
+		//System.out.println("projectsjsonFile: " + this.boardsjsonFile);
 		
 		ObjectMapper mapper = new ObjectMapper();
     	try {
@@ -204,6 +238,66 @@ public class BoardRepositoryImpl implements BoardRepository{
 		ProjectEntity pe = getProjectEntityById(projectid);
 		this.projects.remove(pe);
 		this.writeToFile(projectsjsonFile, this.projects);		
+	}
+
+	@Override
+	public void deleteProjects(List<ProjectEntity> projectEntitys) {
+		for(ProjectEntity p : projectEntitys){
+			ProjectEntity pe = getProjectEntityByName(p.getProjectname());
+			if(pe != null){
+				this.projects.remove(pe);
+			}
+		}
+		this.writeToFile(projectsjsonFile, this.projects);		
+	}
+
+	@Override
+	public void saveProjects(List<ProjectEntity> projectEntitys) {
+		for(ProjectEntity p : projectEntitys){
+			ProjectEntity pe = getProjectEntityByName(p.getProjectname());
+			if(pe == null){
+				p.setOrderNo(0);
+				p.setStageid("0");
+				p.setProjectid(UUID.randomUUID().toString());
+				this.projects.add(p);
+			}
+		}		
+		this.writeToFile(projectsjsonFile, this.projects);		
+		
+	}
+
+	@Override
+	public void refreshProjectsTaskids(String projectid, Set<String> taskids) {
+		ProjectEntity pe = getProjectEntityById(projectid);
+		StringBuffer sb = new StringBuffer();
+		for(String taskid : taskids){
+			sb.append((sb.length()==0 ? "" : ",") + taskid);
+		}
+
+		pe.setTaskids(sb.toString());
+		this.writeToFile(projectsjsonFile, this.projects);		
+	}
+
+	@Override
+	public void saveAndDeleteProjects(List<String> saves, List<String> deletes) {
+		ProjectEntity pe = null;
+		for(String projectname : saves){
+			pe = getProjectEntityByName(projectname);
+			if(pe == null){
+				pe = new ProjectEntity();
+				pe.setProjectname(projectname);
+				this.projects.add(pe);
+			}
+		}		
+		
+		for(String projectname : deletes){
+			pe = getProjectEntityByName(projectname);
+			if(pe != null){
+				this.projects.remove(pe);
+			}
+		}
+		
+		this.writeToFile(projectsjsonFile, this.projects);				
 	}
 
 }

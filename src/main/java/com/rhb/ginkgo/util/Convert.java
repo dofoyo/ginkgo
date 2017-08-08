@@ -15,4 +15,13 @@ public class Convert {
 		return str;
 	}
 	
+	public static String html2Str(String html){
+		String reg1 = "<[^>]*>";
+		String reg2 = "&quot;";
+
+		String s = html.replaceAll(reg1, "").replaceAll(reg2, "\"");
+		return s;
+		
+	}
+	
 }

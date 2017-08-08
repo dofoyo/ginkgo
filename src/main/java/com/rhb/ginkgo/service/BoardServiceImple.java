@@ -2,11 +2,13 @@ package com.rhb.ginkgo.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.rhb.ginkgo.api.dto.BoardDTO;
@@ -18,6 +20,7 @@ import com.rhb.ginkgo.repository.AttachmentRepository;
 import com.rhb.ginkgo.repository.BoardRepository;
 import com.rhb.ginkgo.repository.PersonRepository;
 import com.rhb.ginkgo.repository.TaskRepository;
+import com.rhb.ginkgo.repository.TaskdetailRepository;
 import com.rhb.ginkgo.repository.entity.AttachmentEntity;
 import com.rhb.ginkgo.repository.entity.BoardEntity;
 import com.rhb.ginkgo.repository.entity.PersonEntity;
@@ -25,6 +28,7 @@ import com.rhb.ginkgo.repository.entity.StageEntity;
 import com.rhb.ginkgo.repository.entity.TaskEntity;
 import com.rhb.ginkgo.repository.entity.TaskdetailEntity;
 import com.rhb.ginkgo.repository.entity.TaskuserEntity;
+import com.rhb.ginkgo.util.Convert;
 import com.rhb.ginkgo.repository.entity.ProjectEntity;
 
 @Service("BoardServiceImple")
@@ -41,6 +45,11 @@ public class BoardServiceImple implements BoardService {
 	@Autowired
 	private AttachmentRepository attachmentRepository;
 	
+	@Autowired
+	private TaskdetailRepository taskdetailRepository;
+	
+	@Value("${theTaskid}")
+	private String theTaskid;
 	
 	private Map<String, String> persons = null;
 	
@@ -65,7 +74,10 @@ public class BoardServiceImple implements BoardService {
 	}
 
 	@Override
-	public BoardDTO getBoard(String boardid) {
+	public BoardDTO getBoard(String boardid, boolean refresh) {
+		if(refresh){
+			this.refreshProjects();
+		}
 		
 		BoardEntity be = boardRepository.getBoard(boardid);
 		BoardDTO boardDTO = new BoardDTO(be.getBoardid(),be.getBoardname());
@@ -98,19 +110,15 @@ public class BoardServiceImple implements BoardService {
 		boardRepository.updateProjectStageidAndOrder(stageid, projectlist);
 	}
 
-	@Override
-	public void createProject(ProjectDTO projectDTO) {
-		//String stageid,String projectid, String projectname, String description,Integer orderNo
-		ProjectEntity projectEntity = new ProjectEntity("0",UUID.randomUUID().toString(),projectDTO.getProjectname(),projectDTO.getDescription(),0);
-		boardRepository.saveProject(projectEntity);
-	}
-	
-	
 
 	@Override
-	public ProjectDTO getProject(String projectid) {
+	public ProjectDTO getProject(String projectid, boolean refresh) {
 		if(this.persons == null){
 			this.refreshPersons();
+		}
+		
+		if(refresh){
+			this.refreshProjectsTaskids(projectid);
 		}
 	
 		ProjectEntity pe = boardRepository.getProject(projectid);
@@ -165,15 +173,18 @@ public class BoardServiceImple implements BoardService {
 				taskDetailDTO = new TaskDetailDTO();
 				taskDetailDTO.setDateAndTime(taskEntity.getCreatetime());
 				taskDetailDTO.setPerson(persons.get(taskEntity.getCreater())); 
-				taskDetailDTO.setDone(this.getAttachmentHtml(taskEntity.getAttachmentid()));  //待完成，得到附件名称
+				taskDetailDTO.setDone(this.getAttachmentHtml(taskEntity.getAttachmentid())); 
 				taskDTO.addTaskDetail(taskDetailDTO);
 				
 				for(TaskdetailEntity detail : taskEntity.getTaskdetails()){
-					if(!detail.getContent().equals("发起任务")){
+					if(!detail.getContent().equals("发起任务") && detail.getIsrecall()!=2){
 						taskDetailDTO = new TaskDetailDTO();
 						taskDetailDTO.setDateAndTime(detail.getCreatetime());
 						taskDetailDTO.setPerson(persons.get(detail.getEmpnum())); 
 						taskDetailDTO.setDone(detail.getContent());
+						if(detail.getAttachmentid()!=null && !detail.getAttachmentid().trim().isEmpty()){
+							taskDetailDTO.setDone((detail.getContent().trim().isEmpty()? "" : detail.getContent()+"<br>") + this.getAttachmentHtml(detail.getAttachmentid()));	
+						}
 						taskDTO.addTaskDetail(taskDetailDTO);
 					}
 				}
@@ -183,19 +194,16 @@ public class BoardServiceImple implements BoardService {
 		return projectDTO;
 	}
 
-	@Override
-	public void updateProjectidAndTaskid(String projectid, String taskid) {
-		
-		this.boardRepository.updateProjectidAndTaskid(projectid, taskid);
-	}
 	
 	private String getAttachmentHtml(String attachmentids){
 		String html = "";
-		if(!attachmentids.trim().isEmpty()){
+		if(attachmentids!=null && !attachmentids.trim().isEmpty()){
 			String[] ids = attachmentids.split(",");
 			AttachmentEntity attachmentEntity = null;
 			for(String id : ids){
+				//System.out.println("attachementid = '" + id + "'");
 				attachmentEntity = attachmentRepository.findOne(id);
+				//System.out.println(attachmentEntity);
 				if(attachmentEntity!=null){
 					html += attachmentEntity.getHtml() + "<br>";
 				}
@@ -206,16 +214,47 @@ public class BoardServiceImple implements BoardService {
 	}
 
 	@Override
-	public void removeTaskidFromProject(String projectid, String taskid) {
-		this.boardRepository.removeTaskidFromProject(projectid, taskid);
+	public void refreshProjects() {
+		String createRegexp = "create:";
+		String removeRegexp = "remove:";
 		
+		//String reg1 = "<[^>]*>";
+		//String reg2 = "&quot;";
+		
+		int begin = 7;
+		
+		List<String> creates = new ArrayList<String>();
+		List<String> removes = new ArrayList<String>();
+ 	
+		TaskEntity taskEntity = taskRepository.findOne(theTaskid);
+    	String projectName = null;
+		for(TaskdetailEntity detail : taskEntity.getTaskdetails()){
+			projectName = Convert.html2Str(detail.getContent()).substring(begin);
+			if(detail.getContent().contains(createRegexp) && detail.getIsrecall()!=2){
+				creates.add(projectName);					
+			}else if(detail.getContent().contains(removeRegexp) && detail.getIsrecall()!=2){
+				removes.add(projectName);					
+			}
+		}
+		
+		boardRepository.saveAndDeleteProjects(creates, removes);
 	}
-
+	
 	@Override
-	public void deleteProject(String projectid) {
-		this.boardRepository.deleteProject(projectid);
+	public void refreshProjectsTaskids(String projectid) {
+		if(projectid!=null && !projectid.trim().isEmpty()){
+			List<TaskdetailEntity> details = taskdetailRepository.findByIsrecallNotAndContentLike(2,"%" + projectid + "%");
+			
+			//System.out.println("findByContentLike(" + projectid + "), size = " + details.size());
+			
+			Set<String> taskids = new HashSet<String>();
+			for(TaskdetailEntity detail : details){
+				if(!detail.getTaskid().equals(theTaskid)){
+					taskids.add(detail.getTaskid());
+				}
+			}
+			boardRepository.refreshProjectsTaskids(projectid, taskids);
 		
+		}
 	}
-
-
 }

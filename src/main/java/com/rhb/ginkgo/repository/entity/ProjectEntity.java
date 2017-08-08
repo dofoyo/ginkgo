@@ -1,18 +1,23 @@
 package com.rhb.ginkgo.repository.entity;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.UUID;
 
 public class ProjectEntity {
-	private String stageid;
+	private String stageid = "";
 	private String projectid;
-	private String projectname;
-	private String description;
-	private Integer orderNo;
-	private String taskids;
+	private String projectname ;
+	private String description = "";
+	private Integer orderNo = 0;
+	private String taskids = "";
 
 	public ProjectEntity(){
-		
+		super();
+		this.stageid = "0";
+		this.projectid = UUID.randomUUID().toString();
+		this.projectname = "";
+		this.description = "";
+		this.orderNo = 0;
+		this.taskids = "";
 	}
 	
 	public ProjectEntity(String stageid,String projectid, String projectname, String description,Integer orderNo){

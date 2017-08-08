@@ -5,8 +5,8 @@
 
   <groupId>com.rhb</groupId>
   <artifactId>ginkgo</artifactId>
-  <version>0.1.0</version>
-  <packaging>jar</packaging>
+  <version>1</version>
+  <packaging>war</packaging>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -50,9 +50,7 @@
 		    <version>4.12</version>
 		    <scope>test</scope>
 		</dependency>
-    
   </dependencies>
-
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

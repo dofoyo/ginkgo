@@ -2,6 +2,7 @@ package com.rhb.ginkgo.repository;
 
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,7 @@ public class PersonRepositoryTest {
 	@Test
 	public void test(){
 		List<PersonEntity> persons = personRepository.findAll();
-		
-		for(PersonEntity p : persons){
-			System.out.println(p.getRealname());
-		}
+		Assert.assertTrue(persons!=null);
 		
 	}
 	

@@ -84,6 +84,12 @@ public class TaskdetailEntity {
 	public void setSystemid(String systemid) {
 		this.systemid = systemid;
 	}
+	@Override
+	public String toString() {
+		return "TaskdetailEntity [id=" + id + ", empnum=" + empnum + ", taskid=" + taskid + ", content=" + content
+				+ ", type=" + type + ", attachmentid=" + attachmentid + ", createtime=" + createtime + ", creater="
+				+ creater + ", isrecall=" + isrecall + ", systemid=" + systemid + "]";
+	}
 	
 	
 	

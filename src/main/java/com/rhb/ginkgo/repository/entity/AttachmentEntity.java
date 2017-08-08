@@ -34,6 +34,12 @@ public class AttachmentEntity {
 		String str = "<a href='http://m.hqhop.com:10086"+url+"'>"+filename+"</a>";
 		return str;
 	}
+	@Override
+	public String toString() {
+		return "AttachmentEntity [id=" + id + ", filename=" + filename + ", url=" + url + "]";
+	}
+	
+	
 	
 
 }
