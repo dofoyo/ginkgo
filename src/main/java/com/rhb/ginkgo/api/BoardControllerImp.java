@@ -25,7 +25,7 @@ public class BoardControllerImp implements BoardController{
 	@GetMapping("/board")
     public ResponseContent<BoardDTO> getBoard(@RequestParam(value="id", defaultValue="1") String boardid) {
     	//System.out.println("boardid: " + boardid);	
-		System.out.println("boardService: " + boardService);
+		//System.out.println("boardService: " + boardService);
         return new ResponseContent<BoardDTO>(ResponseEnum.SUCCESS,boardService.getBoard(boardid,false));
     }
 	

@@ -14,6 +14,8 @@ public class TaskdetailEntity {
 	private String empnum;
 	private String taskid;
 	private String content;
+	
+	private String text_content;
 	private Integer type;
 	private String attachmentid;
 	private Timestamp createtime;
@@ -84,13 +86,21 @@ public class TaskdetailEntity {
 	public void setSystemid(String systemid) {
 		this.systemid = systemid;
 	}
+	
+	
+	public String getText_content() {
+		return text_content;
+	}
+	public void setText_content(String text_content) {
+		this.text_content = text_content;
+	}
 	@Override
 	public String toString() {
 		return "TaskdetailEntity [id=" + id + ", empnum=" + empnum + ", taskid=" + taskid + ", content=" + content
-				+ ", type=" + type + ", attachmentid=" + attachmentid + ", createtime=" + createtime + ", creater="
-				+ creater + ", isrecall=" + isrecall + ", systemid=" + systemid + "]";
+				+ ", text_content=" + text_content + ", type=" + type + ", attachmentid=" + attachmentid
+				+ ", createtime=" + createtime + ", creater=" + creater + ", isrecall=" + isrecall + ", systemid="
+				+ systemid + "]";
 	}
-	
 	
 	
 }

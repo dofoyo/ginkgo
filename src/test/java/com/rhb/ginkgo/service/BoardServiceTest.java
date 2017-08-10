@@ -19,7 +19,7 @@ public class BoardServiceTest {
 	@Test
 	public void testGetBoard(){
 		String boardid = "1";
-		BoardDTO board = boardService.getBoard(boardid,false);
+		BoardDTO board = boardService.getBoard(boardid,true);
 		Assert.assertTrue(board!=null);
 	}
 

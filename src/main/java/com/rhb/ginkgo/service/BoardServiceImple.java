@@ -28,7 +28,6 @@ import com.rhb.ginkgo.repository.entity.StageEntity;
 import com.rhb.ginkgo.repository.entity.TaskEntity;
 import com.rhb.ginkgo.repository.entity.TaskdetailEntity;
 import com.rhb.ginkgo.repository.entity.TaskuserEntity;
-import com.rhb.ginkgo.util.Convert;
 import com.rhb.ginkgo.repository.entity.ProjectEntity;
 
 @Service("BoardServiceImple")
@@ -218,9 +217,6 @@ public class BoardServiceImple implements BoardService {
 		String createRegexp = "create:";
 		String removeRegexp = "remove:";
 		
-		//String reg1 = "<[^>]*>";
-		//String reg2 = "&quot;";
-		
 		int begin = 7;
 		
 		List<String> creates = new ArrayList<String>();
@@ -229,11 +225,13 @@ public class BoardServiceImple implements BoardService {
 		TaskEntity taskEntity = taskRepository.findOne(theTaskid);
     	String projectName = null;
 		for(TaskdetailEntity detail : taskEntity.getTaskdetails()){
-			projectName = Convert.html2Str(detail.getContent()).substring(begin);
-			if(detail.getContent().contains(createRegexp) && detail.getIsrecall()!=2){
-				creates.add(projectName);					
-			}else if(detail.getContent().contains(removeRegexp) && detail.getIsrecall()!=2){
-				removes.add(projectName);					
+			if((detail.getText_content().contains(createRegexp) || detail.getText_content().contains(removeRegexp)) && detail.getIsrecall()!=2){
+				projectName = detail.getText_content().substring(begin);
+				if(detail.getText_content().contains(createRegexp)){
+					creates.add(projectName);					
+				}else if(detail.getText_content().contains(removeRegexp)){
+					removes.add(projectName);					
+				}
 			}
 		}
 		
@@ -243,7 +241,7 @@ public class BoardServiceImple implements BoardService {
 	@Override
 	public void refreshProjectsTaskids(String projectid) {
 		if(projectid!=null && !projectid.trim().isEmpty()){
-			List<TaskdetailEntity> details = taskdetailRepository.findByIsrecallNotAndContentLike(2,"%" + projectid + "%");
+			List<TaskdetailEntity> details = taskdetailRepository.findByIsrecallNotAndTextcontent(projectid);
 			
 			//System.out.println("findByContentLike(" + projectid + "), size = " + details.size());
 			

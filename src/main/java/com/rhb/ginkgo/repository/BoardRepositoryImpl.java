@@ -47,6 +47,9 @@ public class BoardRepositoryImpl implements BoardRepository{
 
 	@Override
 	public BoardEntity getBoard(String boardid) {
+		if(this.boards == null){
+			this.init();
+		}
 		return this.getBoardEntityById(boardid);
 	}
 	
@@ -280,6 +283,10 @@ public class BoardRepositoryImpl implements BoardRepository{
 
 	@Override
 	public void saveAndDeleteProjects(List<String> saves, List<String> deletes) {
+		if(this.boards == null){
+			this.init();
+		}
+		
 		ProjectEntity pe = null;
 		for(String projectname : saves){
 			pe = getProjectEntityByName(projectname);
