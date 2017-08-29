@@ -33,7 +33,7 @@ public class TaskDTO {
 	public List<TaskDetailDTO> getTaskDetail() {
 		Collections.sort(taskDetail, new Comparator<TaskDetailDTO>(){
 			public int compare(TaskDetailDTO t1, TaskDetailDTO t2) {
-				return t1.getDateTime().compareTo(t2.getDateTime());
+				return t2.getDateTime().compareTo(t1.getDateTime()); //时间倒序
 			}
 			
 		});

@@ -89,7 +89,7 @@ public class BoardServiceImple implements BoardService {
 			StageDTO stage = new StageDTO(se.getStageid(),se.getStagename(),se.getOrderNo());
 			projects = boardRepository.getProjects(se.getStageid());
 			for(ProjectEntity te : projects){
-				ProjectDTO project = new ProjectDTO(te.getProjectid(),te.getProjectname(),te.getDescription(),te.getOrderNo());
+				ProjectDTO project = new ProjectDTO(te.getProjectid(),te.getProjectname(),te.getDescription(),te.getOrderNo(),te.getType());
 				stage.getProjects().add(project);
 			}
 			boardDTO.getStages().add(stage);
@@ -225,11 +225,11 @@ public class BoardServiceImple implements BoardService {
 		TaskEntity taskEntity = taskRepository.findOne(theTaskid);
     	String projectName = null;
 		for(TaskdetailEntity detail : taskEntity.getTaskdetails()){
-			if((detail.getText_content().contains(createRegexp) || detail.getText_content().contains(removeRegexp)) && detail.getIsrecall()!=2){
-				projectName = detail.getText_content().substring(begin);
-				if(detail.getText_content().contains(createRegexp)){
+			if((detail.getTextcontent().contains(createRegexp) || detail.getTextcontent().contains(removeRegexp)) && detail.getIsrecall()!=2){
+				projectName = detail.getTextcontent().substring(begin);
+				if(detail.getTextcontent().contains(createRegexp)){
 					creates.add(projectName);					
-				}else if(detail.getText_content().contains(removeRegexp)){
+				}else if(detail.getTextcontent().contains(removeRegexp)){
 					removes.add(projectName);					
 				}
 			}
@@ -255,4 +255,18 @@ public class BoardServiceImple implements BoardService {
 		
 		}
 	}
+
+	@Override
+	public void updateProjectType(String projectid) {
+		ProjectEntity pe = boardRepository.getProject(projectid);
+		
+		if(pe.getType()==6){
+			boardRepository.updateProjectidType(projectid,0);
+		}else{
+			boardRepository.updateProjectidType(projectid,pe.getType()+1);
+		}
+	
+	}
+
+
 }

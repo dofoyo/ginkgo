@@ -19,6 +19,7 @@ public interface BoardRepository {
 	
 	public void updateProjectStageidAndOrder(String stageId, List<ProjectEntity> projects);
 	public void updateProjectidAndTaskid(String projectid, String taskid);
+	public void updateProjectidType(String projectid,Integer type);
 	
 	public void refreshProjectsTaskids(String projectid,Set<String> taskids);
 	

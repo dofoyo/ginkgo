@@ -13,6 +13,8 @@ public interface BoardService {
 	
 	public void updateProjectStageidAndOrder(String stageid, List<ProjectDTO> projects);
 	
+	public void updateProjectType(String projectid);
+	
 	public ProjectDTO getProject(String projectid, boolean refresh);
 	
 	public void refreshProjects();

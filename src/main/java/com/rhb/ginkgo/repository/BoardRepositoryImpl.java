@@ -307,4 +307,11 @@ public class BoardRepositoryImpl implements BoardRepository{
 		this.writeToFile(projectsjsonFile, this.projects);				
 	}
 
+	@Override
+	public void updateProjectidType(String projectid, Integer type) {
+		ProjectEntity pe = getProjectEntityById(projectid);
+		pe.setType(type);
+		this.writeToFile(projectsjsonFile, this.projects);				
+	}
+
 }

@@ -49,6 +49,24 @@ public class BoardControllerTest {
         //Assert.assertFalse("数据不一致", !expectedResult.equals(content));  
         
     }
+    
+    @Test
+    public void testGetProject()throws Exception{
+    	//String expectedResult = "{\"id\":1,\"content\":\"Hello, World!\"}";  
+        String uri = "/project?id=0b44b189-7e53-4ea1-acc6-c3149a1b6c19";  
+        MvcResult mvcResult = this.mvc.perform(MockMvcRequestBuilders.get(uri).accept(MediaType.APPLICATION_JSON)).andReturn(); 
+        int status = mvcResult.getResponse().getStatus();  
+        //String content = mvcResult.getResponse().getContentAsString();  
+        
+        //System.out.println("status: " + status);
+        //System.out.println("content: " + content);
+
+        Assert.assertTrue("错误，正确的返回值为200", status == 200);  
+        //Assert.assertFalse("错误，正确的返回值为200", status != 200);  
+        //Assert.assertTrue("数据一致", expectedResult.equals(content));  
+        //Assert.assertFalse("数据不一致", !expectedResult.equals(content));  
+        
+    }
   
 
 }

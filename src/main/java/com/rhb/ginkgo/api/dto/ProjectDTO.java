@@ -10,18 +10,29 @@ public class ProjectDTO {
 	private String projectname;
 	private String description;
 	private Integer orderNo;
+	private Integer type;
+	private String typeclass;
 	private List<TaskDTO> tasks = new ArrayList<TaskDTO>();
 	
 	public ProjectDTO(){
 		
 	}
 	
-	public ProjectDTO(String projectid, String projectname, String description,Integer orderNo){
+	public ProjectDTO(String projectid, String projectname, String description,Integer orderNo,Integer type){
 		super();
 		this.projectid = projectid;
 		this.projectname = projectname;
 		this.description = description;
 		this.orderNo = orderNo;
+		this.type = type;
+	}
+
+	public String getTypeclass() {
+		return typeclass;
+	}
+
+	public void setTypeclass(String typeclass) {
+		this.typeclass = typeclass;
 	}
 
 	public String getProjectid() {
@@ -62,6 +73,14 @@ public class ProjectDTO {
 
 	public void addTask(TaskDTO taskDTO) {
 		tasks.add(taskDTO);
+	}
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
 	}
 
 	@Override

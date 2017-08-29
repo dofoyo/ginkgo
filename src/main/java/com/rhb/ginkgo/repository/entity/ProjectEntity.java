@@ -3,12 +3,13 @@ package com.rhb.ginkgo.repository.entity;
 import java.util.UUID;
 
 public class ProjectEntity {
-	private String stageid = "";
+	private String stageid;
 	private String projectid;
 	private String projectname ;
-	private String description = "";
-	private Integer orderNo = 0;
-	private String taskids = "";
+	private String description;
+	private Integer orderNo;
+	private String taskids;
+	private Integer type;
 
 	public ProjectEntity(){
 		super();
@@ -18,6 +19,7 @@ public class ProjectEntity {
 		this.description = "";
 		this.orderNo = 0;
 		this.taskids = "";
+		this.type = 0;
 	}
 	
 	public ProjectEntity(String stageid,String projectid, String projectname, String description,Integer orderNo){
@@ -28,6 +30,7 @@ public class ProjectEntity {
 		this.description = description;
 		this.orderNo = orderNo;
 		this.taskids = "";
+		this.type = 0;
 	}
 
 	public String getProjectid() {
@@ -78,6 +81,14 @@ public class ProjectEntity {
 
 	public void setTaskids(String taskids) {
 		this.taskids = taskids;
+	}
+	
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
 	}
 
 	@Override

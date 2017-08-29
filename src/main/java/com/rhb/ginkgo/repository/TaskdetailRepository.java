@@ -9,6 +9,6 @@ import com.rhb.ginkgo.repository.entity.TaskdetailEntity;
 
 public interface TaskdetailRepository extends JpaRepository<TaskdetailEntity, String> {
 	
-	@Query("select t from TaskdetailEntity t where t.isrecall!=2 and t.text_content=?")
+	@Query("select t from TaskdetailEntity t where t.isrecall!=2 and t.textcontent=?")
 	public List<TaskdetailEntity> findByIsrecallNotAndTextcontent(String str);
 }

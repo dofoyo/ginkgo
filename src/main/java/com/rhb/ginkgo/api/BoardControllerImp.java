@@ -53,6 +53,12 @@ public class BoardControllerImp implements BoardController{
     	}
     }
     
+    @PutMapping("/projecttype")
+    public void updateProjectType(@RequestParam(value="id") String projectid, @RequestBody String body){
+    	//System.out.println("update project type: projectid=" + projectid + ", " + body);
+    	boardService.updateProjectType(projectid);
+    }
+    
 	@GetMapping("/project")
     public ResponseContent<ProjectDTO> getProject(@RequestParam(value="id") String projectid) {
     	//System.out.println("projectid: " + projectid);	
